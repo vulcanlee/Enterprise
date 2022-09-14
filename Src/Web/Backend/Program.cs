@@ -83,7 +83,7 @@ try
     // 各國語言代碼 https://en.wikipedia.org/wiki/Language_localisation
     // Set the resx file folder path to access
     builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-    builder.Services.AddSyncfusionBlazor();
+    builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
     // Register the Syncfusion locale service to customize the  SyncfusionBlazor component locale culture
     builder.Services.AddSingleton(typeof(ISyncfusionStringLocalizer), typeof(SyncfusionLocalizer));
     builder.Services.Configure<RequestLocalizationOptions>(options =>
