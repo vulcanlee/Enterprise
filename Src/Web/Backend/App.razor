@@ -1,0 +1,31 @@
+﻿@inject BlazorAppContext BlazorAppContext;
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <NotAuthorized>
+                <NotAuthorizedErrorView />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>服務不存在</PageTitle>
+        <CascadingAuthenticationState>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <NotFoundErrorView />
+            </LayoutView>
+        </CascadingAuthenticationState>
+    </NotFound>
+</Router>
+
+@code{
+    [Parameter]
+    public string SourceIP { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SourceIP = BlazorAppContext.GetCurrentIP(SourceIP);
+    }
+}
+
