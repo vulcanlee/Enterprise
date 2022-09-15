@@ -37,7 +37,7 @@
 }
 
 .fixSidebar {
-    position: fixed;
+    position: absolute;
     overflow-y: scroll;
     height: 100%;
     width: var(--fixSidebar-width);
