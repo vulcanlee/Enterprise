@@ -191,13 +191,47 @@ namespace Backend.Services
             #endregion
 
             #region 建立開發環境要用到的測試紀錄
-            #region 建立系統定義參數
+            #region 建立 系統定義參數
             try
             {
                 currentNow = DateTime.Now;
                 Msg = $"建立系統定義參數";
                 OnUpdateMessage(Msg);
                 await 建立系統定義參數Async();
+                OnUpdateMessage($"{Msg} ({DateTime.Now - currentNow})");
+            }
+            catch (Exception ex)
+            {
+                OnUpdateMessage($"{Msg} 發生例外異常 ({DateTime.Now - currentNow})");
+                OnUpdateMessage(ex.Message);
+                Logger.LogError(Msg, ex);
+                return;
+            }
+
+            try
+            {
+                await SystemLogHelper.LogAsync(new SystemLogAdapterModel()
+                {
+                    Message = Msg,
+                    Category = LogCategories.Initialization,
+                    Content = "",
+                    LogLevel = LogLevels.Information,
+                    Updatetime = DateTime.Now,
+                    IP = HttpContextAccessor.GetConnectionIP(),
+                });
+            }
+            catch (Exception)
+            {
+            }
+            Logger.LogInformation($"{Msg}");
+            #endregion
+            #region 建立 組織單位
+            try
+            {
+                currentNow = DateTime.Now;
+                Msg = $"建立 組織單位";
+                OnUpdateMessage(Msg);
+                await 建立組織單位Async();
                 OnUpdateMessage($"{Msg} ({DateTime.Now - currentNow})");
             }
             catch (Exception ex)
@@ -316,6 +350,53 @@ namespace Backend.Services
             await context.SaveChangesAsync();
             CleanTrackingHelper.Clean<AccountPolicy>(context);
             #endregion
+            #endregion
+        }
+        private async Task 建立組織單位Async()
+        {
+            #region 建立 組織單位 
+
+            CleanTrackingHelper.Clean<OrganizationalUnit>(context);
+            #region 新增 組織單位 紀錄
+            OrganizationalUnit OrganizationalUnit = new OrganizationalUnit()
+            {
+                Name = "Contoso 集團",
+            };
+            context.OrganizationalUnit.Add(OrganizationalUnit);
+            #endregion
+
+            #region 新增 組織單位 紀錄
+            OrganizationalUnit OrganizationalSubUnit1 = new OrganizationalUnit()
+            {
+                Name = "總經理室",
+                Remark = "Contoso 集團",
+                Parent = OrganizationalUnit
+            };
+            context.OrganizationalUnit.Add(OrganizationalSubUnit1);
+            #endregion
+
+            #region 新增 組織單位 紀錄
+            OrganizationalUnit OrganizationalSubUnit2 = new OrganizationalUnit()
+            {
+                Name = "HR",
+                Remark = "Contoso 集團",
+                Parent = OrganizationalSubUnit1
+            };
+            context.OrganizationalUnit.Add(OrganizationalSubUnit2);
+            #endregion
+
+            #region 新增 組織單位 紀錄
+            OrganizationalUnit OrganizationalSubUnit3 = new OrganizationalUnit()
+            {
+                Name = "財務部",
+                Remark = "Contoso 集團",
+                Parent = OrganizationalSubUnit1
+            };
+            context.OrganizationalUnit.Add(OrganizationalSubUnit3);
+            #endregion
+
+            await context.SaveChangesAsync();
+            CleanTrackingHelper.Clean<OrganizationalUnit>(context);
             #endregion
         }
         private async Task 建立使用者紀錄Async(string InitializationMode)

@@ -31,6 +31,7 @@ namespace Domains.Models
         public virtual DbSet<ExceptionRecord> ExceptionRecord { get; set; }
         public virtual DbSet<AccountPolicy> AccountPolicy { get; set; }
         public virtual DbSet<MailQueue> MailQueue { get; set; }
+        public virtual DbSet<OrganizationalUnit> OrganizationalUnit { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
